@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
 import 'package:paystack_manager/models/payment_info.dart';
 import 'package:paystack_manager/utils/ui_color.dart';
 import 'package:paystack_manager/widgets/accent_button.dart';
@@ -9,10 +8,10 @@ import 'package:paystack_manager/widgets/text_input_field.dart';
 
 class PaymentPhoneEntryView extends StatefulWidget {
   PaymentPhoneEntryView({
-    Key key,
-    this.paymentInfo,
-    this.message,
-    this.onSubmit,
+    Key? key,
+    required this.paymentInfo,
+    required this.message,
+    required this.onSubmit,
   }) : super(key: key);
 
   final PaymentInfo paymentInfo;
@@ -51,7 +50,7 @@ class _PaymentPhoneEntryViewState extends State<PaymentPhoneEntryView> {
             height: 40,
           ),
           Icon(
-            FontAwesome.mobile_phone,
+            Icons.phone_android_outlined,
             size: 42,
             color: UIColors.primaryColor,
           ),
@@ -74,8 +73,11 @@ class _PaymentPhoneEntryViewState extends State<PaymentPhoneEntryView> {
             labelText: "Phone Number",
             textEditingController: _phoneNumberTextEditingController,
             keyboardType: TextInputType.phone,
-            validator: (String value) {
-              if (value.isEmpty || value.length < 10 || value.length > 13) {
+            validator: (String? value) {
+              if (value == null ||
+                  value.isEmpty ||
+                  value.length < 10 ||
+                  value.length > 13) {
                 return "Invalid Phone Number";
               }
 
@@ -89,7 +91,7 @@ class _PaymentPhoneEntryViewState extends State<PaymentPhoneEntryView> {
             onPressed: () {
               // Validate returns true if the form is valid, or false
               // otherwise.
-              if (_formKey.currentState.validate()) {
+              if (_formKey.currentState!.validate()) {
                 // If the form is valid, display a Snackbar.
                 print("Valid");
                 widget.onSubmit(_phoneNumberTextEditingController.text);

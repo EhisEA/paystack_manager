@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:paystack_manager/api/paystack_payment_api.dart';
 import 'package:paystack_manager/data/payment_options.dart';
 import 'package:paystack_manager/models/api_response.dart';
@@ -22,10 +23,8 @@ import 'package:paystack_manager/widgets/payment_phone_entry.dart';
 import 'package:paystack_manager/widgets/payment_pin_entry_view.dart';
 
 class PaystackPaymentCheckOutPage extends StatefulWidget {
-  PaystackPaymentCheckOutPage({
-    Key key,
-    @required this.paymentInfo,
-  }) : super(key: key);
+  PaystackPaymentCheckOutPage({Key? key, required this.paymentInfo})
+      : super(key: key);
 
   final PaymentInfo paymentInfo;
 
@@ -37,9 +36,9 @@ class PaystackPaymentCheckOutPage extends StatefulWidget {
 class _PaystackPaymentCheckOutPageState
     extends State<PaystackPaymentCheckOutPage> {
   //Selected Payment Option Model
-  PaymentOption _selectedPaymentOption;
-  //Payment Info Object
-  PaymentInfo _paymentInfo;
+  PaymentOption? _selectedPaymentOption;
+  //to hold current processing Payment Info Object
+  PaymentInfo? _paymentInfo;
 
   //Page Status Enum
   //use to handle the flow of UI Changes
@@ -56,140 +55,8 @@ class _PaystackPaymentCheckOutPageState
       currency: widget.paymentInfo.currency,
     );
 
-    //Page body context
-    Widget pageBodyContent;
-
-    //conditions to determine with UI widget to show
-    switch (_transactionState) {
-      case TransactionState.Idle:
-
-        //The view to show when user hasn't select a payment option
-        if (_selectedPaymentOption == null) {
-          pageBodyContent = PaymentOptionSelectorView(
-            paymentInfo: widget.paymentInfo,
-            paymentOptionslist: paymentOptionslist,
-            onItemPressed: (PaymentOption paymentOption) {
-              setState(() {
-                _selectedPaymentOption = paymentOption;
-              });
-            },
-          );
-        }
-        //The view to show when user select CARD payment option
-        else if (_selectedPaymentOption.isCard) {
-          pageBodyContent = CardPaymentView(
-            paymentInfo: widget.paymentInfo,
-            onSubmit: _processCardPayment,
-          );
-        }
-        //The view to show when user select BANK payment option
-        else if (_selectedPaymentOption.isBank) {
-          pageBodyContent = BankPaymentView(
-            paymentInfo: widget.paymentInfo,
-            message: "Please enter your bank account details",
-            onSubmit: _processBankPayment,
-          );
-        }
-        //The view to show when user select BANK payment option
-        else if (_selectedPaymentOption.isMomo) {
-          pageBodyContent = MobileMoneyPaymentView(
-            paymentInfo: widget.paymentInfo,
-            message: "Please enter your phone number",
-            onSubmit: _processMobileMoneyPayment,
-          );
-        }
-        break;
-
-      case TransactionState.Loading:
-        pageBodyContent = LoadingTransactionView(
-          paymentInfo: widget.paymentInfo,
-          message: _transactionStateMessage,
-        );
-        break;
-
-      case TransactionState.SEND_PIN:
-
-        //makinng sure there is instruction for the user
-        _transactionStateMessage = _transactionStateMessage.isEmpty
-            ? "Please enter your 4-digit pin to authorize this payment"
-            : _transactionStateMessage;
-        pageBodyContent = PaymentPINEntryView(
-          paymentInfo: widget.paymentInfo,
-          message: _transactionStateMessage,
-          onSubmit: _processSendPIN,
-        );
-        break;
-
-      case TransactionState.SEND_OTP:
-
-        //makinng sure there is instruction for the user
-        _transactionStateMessage = _transactionStateMessage.isEmpty
-            ? "Please enter the otp sent to your phone"
-            : _transactionStateMessage;
-        pageBodyContent = PaymentOTPEntryView(
-          paymentInfo: widget.paymentInfo,
-          message: _transactionStateMessage,
-          onSubmit: _processSendOTP,
-        );
-
-        break;
-      case TransactionState.SEND_PHONE:
-        //makinng sure there is instruction for the user
-        _transactionStateMessage = _transactionStateMessage.isEmpty
-            ? "Please enter your phone number"
-            : _transactionStateMessage;
-        pageBodyContent = PaymentPhoneEntryView(
-          paymentInfo: widget.paymentInfo,
-          message: _transactionStateMessage,
-          onSubmit: _processSendPhone,
-        );
-        break;
-
-      case TransactionState.SEND_ADDRESS:
-        //makinng sure there is instruction for the user
-        _transactionStateMessage = _transactionStateMessage.isEmpty
-            ? "Please enter your address"
-            : _transactionStateMessage;
-        pageBodyContent = PaymentAddressEntryView(
-          paymentInfo: widget.paymentInfo,
-          message: _transactionStateMessage,
-          onSubmit: _processSendAddress,
-        );
-        break;
-
-      case TransactionState.SEND_BIRTHDATE:
-        //makinng sure there is instruction for the user
-        _transactionStateMessage = _transactionStateMessage.isEmpty
-            ? "Please enter your date of birth"
-            : _transactionStateMessage;
-        pageBodyContent = PaymentBirthDayEntryView(
-          paymentInfo: widget.paymentInfo,
-          message: _transactionStateMessage,
-          onSubmit: _processSendDOB,
-        );
-        break;
-
-      case TransactionState.SEND_AUTH_URL:
-        //load the auth url in a webview for user to interacte with
-        pageBodyContent = PaymentAuthView(
-          authUrl: _bankAuthUrl,
-        );
-        break;
-
-      case TransactionState.FAILED:
-        //makinng sure there is instruction for the user
-        _transactionStateMessage = _transactionStateMessage.isEmpty
-            ? "Transaction Failed. please try again or use another payment option if possible"
-            : _transactionStateMessage;
-        pageBodyContent = PaymentFailedView(
-          paymentInfo: widget.paymentInfo,
-          message: _transactionStateMessage,
-        );
-        break;
-
-      default:
-        break;
-    }
+    // //Page body context
+    // Widget pageBodyContent;
 
     return WillPopScope(
       //forbidden swipe in iOS(my ThemeData(platform: TargetPlatform.iOS,)
@@ -204,7 +71,7 @@ class _PaystackPaymentCheckOutPageState
         appBar: AppBar(
           centerTitle: false,
           automaticallyImplyLeading: false,
-          leading: FlatButton(
+          leading: TextButton(
             //when use close the payment page
             onPressed: _closePaystackPayment,
             child: Icon(
@@ -214,12 +81,12 @@ class _PaystackPaymentCheckOutPageState
           //when user select a payment option. update the appbar title
           title: (_selectedPaymentOption != null)
               ? PaymentOptionListViewItem(
-                  paymentOption: _selectedPaymentOption,
+                  paymentOption: _selectedPaymentOption!,
                 )
               : SizedBox.shrink(),
           elevation: 0,
           backgroundColor: Colors.grey[200],
-          brightness: Brightness.light,
+          systemOverlayStyle: SystemUiOverlayStyle.light, // Brightness.light,
           actions: <Widget>[
             //Show the change payment option
             //if user has selected a payment option and
@@ -228,7 +95,7 @@ class _PaystackPaymentCheckOutPageState
                     _transactionState != TransactionState.Loading &&
                     _transactionState != TransactionState.SUCCESS &&
                     _transactionState != TransactionState.SEND_AUTH_URL)
-                ? FlatButton(
+                ? TextButton(
                     onPressed: () {
                       setState(() {
                         _selectedPaymentOption = null;
@@ -243,10 +110,136 @@ class _PaystackPaymentCheckOutPageState
         ),
         body: Container(
           //if user hasn't select any payment option
-          child: pageBodyContent,
+          child: getView(paymentOptionslist),
         ),
       ),
     );
+  }
+
+  Widget getView(paymentOptionslist) {
+    //conditions to determine with UI widget to show
+    switch (_transactionState) {
+      case TransactionState.Idle:
+
+        //The view to show when user hasn't select a payment option
+        if (_selectedPaymentOption == null) {
+          return PaymentOptionSelectorView(
+            paymentInfo: widget.paymentInfo,
+            paymentOptionslist: paymentOptionslist,
+            onItemPressed: (PaymentOption paymentOption) {
+              setState(() {
+                _selectedPaymentOption = paymentOption;
+              });
+            },
+          );
+        }
+        //The view to show when user select CARD payment option
+        else if (_selectedPaymentOption!.isCard) {
+          return CardPaymentView(
+            paymentInfo: widget.paymentInfo,
+            onSubmit: _processCardPayment,
+          );
+        }
+        //The view to show when user select BANK payment option
+        else if (_selectedPaymentOption!.isBank) {
+          return BankPaymentView(
+            paymentInfo: widget.paymentInfo,
+            message: "Please enter your bank account details",
+            onSubmit: _processBankPayment,
+          );
+        }
+        //The view to show when user select BANK payment option
+        else if (_selectedPaymentOption!.isMomo) {
+          return MobileMoneyPaymentView(
+            paymentInfo: widget.paymentInfo,
+            message: "Please enter your phone number",
+            onSubmit: _processMobileMoneyPayment,
+          );
+        }
+        return SizedBox();
+
+      case TransactionState.Loading:
+        return LoadingTransactionView(
+          paymentInfo: widget.paymentInfo,
+          message: _transactionStateMessage,
+        );
+
+      case TransactionState.SEND_PIN:
+
+        //makinng sure there is instruction for the user
+        _transactionStateMessage = _transactionStateMessage.isEmpty
+            ? "Please enter your 4-digit pin to authorize this payment"
+            : _transactionStateMessage;
+        return PaymentPINEntryView(
+          paymentInfo: widget.paymentInfo,
+          message: _transactionStateMessage,
+          onSubmit: _processSendPIN,
+        );
+
+      case TransactionState.SEND_OTP:
+
+        //makinng sure there is instruction for the user
+        _transactionStateMessage = _transactionStateMessage.isEmpty
+            ? "Please enter the otp sent to your phone"
+            : _transactionStateMessage;
+        return PaymentOTPEntryView(
+          paymentInfo: widget.paymentInfo,
+          message: _transactionStateMessage,
+          onSubmit: _processSendOTP,
+        );
+
+      case TransactionState.SEND_PHONE:
+        //makinng sure there is instruction for the user
+        _transactionStateMessage = _transactionStateMessage.isEmpty
+            ? "Please enter your phone number"
+            : _transactionStateMessage;
+        return PaymentPhoneEntryView(
+          paymentInfo: widget.paymentInfo,
+          message: _transactionStateMessage,
+          onSubmit: _processSendPhone,
+        );
+
+      case TransactionState.SEND_ADDRESS:
+        //makinng sure there is instruction for the user
+        _transactionStateMessage = _transactionStateMessage.isEmpty
+            ? "Please enter your address"
+            : _transactionStateMessage;
+        return PaymentAddressEntryView(
+          paymentInfo: widget.paymentInfo,
+          message: _transactionStateMessage,
+          onSubmit: _processSendAddress,
+        );
+
+      case TransactionState.SEND_BIRTHDATE:
+        //makinng sure there is instruction for the user
+        _transactionStateMessage = _transactionStateMessage.isEmpty
+            ? "Please enter your date of birth"
+            : _transactionStateMessage;
+        return PaymentBirthDayEntryView(
+          paymentInfo: widget.paymentInfo,
+          message: _transactionStateMessage,
+          onSubmit: _processSendDOB,
+        );
+
+      case TransactionState.SEND_AUTH_URL:
+        //load the auth url in a webview for user to interacte with
+        return PaymentAuthView(
+          authUrl: _bankAuthUrl,
+        );
+
+      case TransactionState.FAILED:
+        //makinng sure there is instruction for the user
+        _transactionStateMessage = _transactionStateMessage.isEmpty
+            ? "Transaction Failed. please try again or use another payment option if possible"
+            : _transactionStateMessage;
+        return PaymentFailedView(
+          paymentInfo: widget.paymentInfo,
+          message: _transactionStateMessage,
+        );
+
+      default:
+        return SizedBox();
+    }
   }
 
   ///Functions
@@ -308,7 +301,7 @@ class _PaystackPaymentCheckOutPageState
       APIResponse response = await PaystackPaymentApi.sendPIN(
         refrence: _transactionReference,
         pin: pin,
-        paymentInfo: _paymentInfo,
+        paymentInfo: _paymentInfo!,
       );
 
       //save the transaction refrence for futher action
@@ -352,7 +345,7 @@ class _PaystackPaymentCheckOutPageState
       APIResponse response = await PaystackPaymentApi.sendOTP(
         refrence: _transactionReference,
         otp: otp,
-        paymentInfo: _paymentInfo,
+        paymentInfo: _paymentInfo!,
       );
 
       //save the transaction refrence for futher action
@@ -396,7 +389,7 @@ class _PaystackPaymentCheckOutPageState
       APIResponse response = await PaystackPaymentApi.sendPhone(
         refrence: _transactionReference,
         phone: phone,
-        paymentInfo: _paymentInfo,
+        paymentInfo: _paymentInfo!,
       );
 
       //save the transaction refrence for futher action
@@ -440,7 +433,7 @@ class _PaystackPaymentCheckOutPageState
       APIResponse response = await PaystackPaymentApi.sendBirthday(
         refrence: _transactionReference,
         dob: dob,
-        paymentInfo: _paymentInfo,
+        paymentInfo: _paymentInfo!,
       );
 
       //save the transaction refrence for futher action
@@ -492,7 +485,7 @@ class _PaystackPaymentCheckOutPageState
         city: city,
         state: state,
         zipCode: zipCode,
-        paymentInfo: _paymentInfo,
+        paymentInfo: _paymentInfo!,
       );
 
       //save the transaction refrence for futher action
@@ -539,7 +532,7 @@ class _PaystackPaymentCheckOutPageState
       APIResponse response = await PaystackPaymentApi.mobileMoneyPayment(
         provider: provider,
         phone: phoneNumber,
-        paymentInfo: _paymentInfo,
+        paymentInfo: _paymentInfo!,
       );
 
       //save the transaction refrence for futher action
@@ -550,7 +543,9 @@ class _PaystackPaymentCheckOutPageState
         //check of the transaction requires futher action
         _updatedViewState(
           response.nextAction,
-          response.displayText ?? response.dataMessage,
+          response.displayText.isNotEmpty
+              ? response.displayText
+              : response.dataMessage,
           apiResponse: response,
         );
       }
@@ -585,7 +580,7 @@ class _PaystackPaymentCheckOutPageState
       APIResponse response = await PaystackPaymentApi.bankPayment(
         code: bankCode,
         accountNumber: accountNumber,
-        paymentInfo: _paymentInfo,
+        paymentInfo: _paymentInfo!,
       );
 
       //save the transaction refrence for futher action
@@ -624,9 +619,9 @@ class _PaystackPaymentCheckOutPageState
       _retrieveTransactionStatus();
     } else {
       Transaction transaction = Transaction(
-        state: TransactionState.CANCELLED,
-        message: "You cancelled transaction/payment",
-      );
+          state: TransactionState.CANCELLED,
+          message: "You cancelled transaction/payment",
+          refrenceNumber: _paymentInfo!.reference);
 
       Navigator.pop(
         context,
@@ -648,7 +643,7 @@ class _PaystackPaymentCheckOutPageState
       //getting transaction status
       APIResponse response = await PaystackPaymentApi.verifyTransaction(
         refrence: _transactionReference,
-        paymentInfo: _paymentInfo,
+        paymentInfo: _paymentInfo!,
       );
 
       //save the transaction refrence for futher action
@@ -661,7 +656,7 @@ class _PaystackPaymentCheckOutPageState
       //check of the transaction requires futher action
       _updatedViewState(
         response.nextAction,
-        response.gatewayResponse,
+        response.gatewayResponse ?? "",
         apiResponse: response,
       );
     } catch (error) {
@@ -680,20 +675,21 @@ class _PaystackPaymentCheckOutPageState
   void _updatedViewState(
     TransactionState transactionState,
     String transactionStateMessage, {
-    APIResponse apiResponse,
+    APIResponse? apiResponse,
   }) {
     setState(() {
       _transactionState = transactionState;
       _transactionStateMessage = transactionStateMessage;
     });
 
-    if (transactionState == TransactionState.SUCCESS) {
+    if (transactionState == TransactionState.SUCCESS && apiResponse != null) {
       Transaction transaction = Transaction.fromObject(apiResponse);
       Navigator.pop(
         context,
         transaction,
       );
-    } else if (transactionState == TransactionState.PENDING) {
+    } else if (transactionState == TransactionState.PENDING &&
+        apiResponse != null) {
       Transaction transaction = Transaction.fromObject(apiResponse);
       Navigator.pop(
         context,

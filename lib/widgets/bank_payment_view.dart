@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
 import 'package:paystack_manager/data/payment_options.dart';
 import 'package:paystack_manager/models/payment_info.dart';
 import 'package:paystack_manager/models/payment_option.dart';
@@ -12,10 +11,10 @@ import 'package:paystack_manager/widgets/text_input_field.dart';
 
 class BankPaymentView extends StatefulWidget {
   BankPaymentView({
-    Key key,
-    this.paymentInfo,
-    this.message,
-    this.onSubmit,
+    Key? key,
+    required this.paymentInfo,
+    required this.message,
+    required this.onSubmit,
   }) : super(key: key);
 
   final PaymentInfo paymentInfo;
@@ -36,8 +35,8 @@ class _BankPaymentViewState extends State<BankPaymentView> {
   final _formKey = GlobalKey<FormState>();
 
   //List of available payment options
-  List<PaymentOption> bankOptionslist = PaymentOptions.getBankList();
-  PaymentOption _selectedBankOption;
+  static List<PaymentOption> bankOptionslist = PaymentOptions.getBankList();
+  PaymentOption _selectedBankOption = bankOptionslist[0];
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +60,7 @@ class _BankPaymentViewState extends State<BankPaymentView> {
           Icon(
             //FontAwesome.mobile_phone,
             // FlutterIcons.smartphone_fea,
-            FlutterIcons.bank_mco,
+            Icons.account_balance_rounded,
             // FlutterIcons.md_phone_portrait_ion,
             size: 42,
             color: UIColors.primaryColor,
@@ -86,9 +85,10 @@ class _BankPaymentViewState extends State<BankPaymentView> {
             decoration: ShapeDecoration(
               shape: RoundedRectangleBorder(
                 side: BorderSide(
-                    width: 1.0,
-                    style: BorderStyle.solid,
-                    color: Colors.grey[500]),
+                  width: 1.0,
+                  style: BorderStyle.solid,
+                  color: Colors.grey.shade500,
+                ),
                 borderRadius: BorderRadius.all(
                   Radius.circular(5.0),
                 ),
@@ -107,9 +107,9 @@ class _BankPaymentViewState extends State<BankPaymentView> {
                     ),
                   )
                   .toList(),
-              onChanged: (PaymentOption newValue) {
+              onChanged: (PaymentOption? newValue) {
                 setState(() {
-                  _selectedBankOption = newValue;
+                  _selectedBankOption = newValue ?? _selectedBankOption;
                 });
               },
               value: _selectedBankOption,
@@ -122,8 +122,8 @@ class _BankPaymentViewState extends State<BankPaymentView> {
             labelText: "Account Number",
             textEditingController: _accountNumberTextEditingController,
             keyboardType: TextInputType.phone,
-            validator: (String value) {
-              if (value.isEmpty) {
+            validator: (String? value) {
+              if (value == null || value.isEmpty) {
                 return UIStrings.fieldReq;
               } else if (value.length != 10) {
                 return "Invalid Account Number";
@@ -138,7 +138,7 @@ class _BankPaymentViewState extends State<BankPaymentView> {
             onPressed: () {
               // Validate returns true if the form is valid, or false
               // otherwise.
-              if (_formKey.currentState.validate()) {
+              if (_formKey.currentState!.validate()) {
                 // If the form is valid, display a Snackbar.
                 print("Valid");
                 widget.onSubmit(

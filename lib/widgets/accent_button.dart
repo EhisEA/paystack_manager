@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:paystack_manager/utils/ui_color.dart';
 
 class AccentButton extends StatefulWidget {
-  AccentButton({Key key, this.title, this.onPressed}) : super(key: key);
+  AccentButton({Key? key, required this.title, this.onPressed})
+      : super(key: key);
 
   final String title;
-  final Function onPressed;
+  final Function()? onPressed;
 
   @override
   _AccentButtonState createState() => _AccentButtonState();

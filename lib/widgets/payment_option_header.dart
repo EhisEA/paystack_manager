@@ -4,8 +4,8 @@ import 'package:paystack_manager/utils/ui_color.dart';
 
 class PaymentOptionHeader extends StatefulWidget {
   const PaymentOptionHeader({
-    Key key,
-    @required this.paymentInfo,
+    Key? key,
+    required this.paymentInfo,
   }) : super(key: key);
 
   final PaymentInfo paymentInfo;

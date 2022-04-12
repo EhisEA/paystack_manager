@@ -6,12 +6,12 @@ import 'package:paystack_manager/widgets/text_input_field.dart';
 
 class CardNumberTextField extends StatefulWidget {
   CardNumberTextField({
-    Key key,
+    Key? key,
     this.onSaved,
-    this.textEditingController,
+    required this.textEditingController,
   }) : super(key: key);
 
-  final Function onSaved;
+  final Function(String?)? onSaved;
   final TextEditingController textEditingController;
 
   @override
@@ -19,12 +19,12 @@ class CardNumberTextField extends StatefulWidget {
 }
 
 class _CardNumberTextFieldState extends State<CardNumberTextField> {
-  Widget cardTypeIcon;
+  Widget? cardTypeIcon;
 
   @override
   Widget build(BuildContext context) {
     return InputTextField(
-      trailingIcon: cardTypeIcon,
+      // trailingIcon: cardTypeIcon ?? SizedBox(),
       hintText: "0000 0000 0000 0000",
       labelText: "CARD NUMBER",
       validator: CardUtils.validateCardNum,
@@ -38,7 +38,7 @@ class _CardNumberTextFieldState extends State<CardNumberTextField> {
         //update the card icon for the input
         setState(
           () {
-            final cardType = CardUtils.getCardTypeFrmNumber(data);
+            final cardType = CardUtils.getCardTypeFrmNumber(data ?? "");
             cardTypeIcon = Padding(
               padding: const EdgeInsets.all(8.0),
               child: CardUtils.getCardIcon(cardType),
@@ -46,7 +46,7 @@ class _CardNumberTextFieldState extends State<CardNumberTextField> {
           },
         );
       },
-      onSaved: widget.onSaved,
+      onSaved: widget.onSaved?.call,
       textEditingController: widget.textEditingController,
     );
   }

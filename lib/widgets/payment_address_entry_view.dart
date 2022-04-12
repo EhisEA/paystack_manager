@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
 import 'package:paystack_manager/models/payment_info.dart';
 import 'package:paystack_manager/utils/ui_color.dart';
 import 'package:paystack_manager/utils/ui_strings.dart';
@@ -10,15 +9,15 @@ import 'package:paystack_manager/widgets/text_input_field.dart';
 
 class PaymentAddressEntryView extends StatefulWidget {
   PaymentAddressEntryView({
-    Key key,
-    this.paymentInfo,
-    this.message,
-    this.onSubmit,
+    Key? key,
+    required this.paymentInfo,
+    required this.message,
+    required this.onSubmit,
   }) : super(key: key);
 
   final PaymentInfo paymentInfo;
   final String message;
-  final Function onSubmit;
+  final Function(String, String, String, String) onSubmit;
 
   @override
   _PaymentAddressEntryViewState createState() =>
@@ -60,7 +59,7 @@ class _PaymentAddressEntryViewState extends State<PaymentAddressEntryView> {
             height: 40,
           ),
           Icon(
-            MaterialCommunityIcons.map,
+            Icons.map,
             size: 42,
             color: UIColors.primaryColor,
           ),
@@ -82,8 +81,8 @@ class _PaymentAddressEntryViewState extends State<PaymentAddressEntryView> {
           InputTextField(
             labelText: "Address",
             textEditingController: _addressTextEditingController,
-            validator: (String value) {
-              if (value.isEmpty) {
+            validator: (String? value) {
+              if (value == null || value.isEmpty) {
                 return UIStrings.fieldReq;
               }
               return null;
@@ -95,8 +94,8 @@ class _PaymentAddressEntryViewState extends State<PaymentAddressEntryView> {
           InputTextField(
             labelText: "City",
             textEditingController: _cityTextEditingController,
-            validator: (String value) {
-              if (value.isEmpty) {
+            validator: (String? value) {
+              if (value == null || value.isEmpty) {
                 return UIStrings.fieldReq;
               }
               return null;
@@ -108,8 +107,8 @@ class _PaymentAddressEntryViewState extends State<PaymentAddressEntryView> {
           InputTextField(
             labelText: "State",
             textEditingController: _stateTextEditingController,
-            validator: (String value) {
-              if (value.isEmpty) {
+            validator: (String? value) {
+              if (value == null || value.isEmpty) {
                 return UIStrings.fieldReq;
               }
               return null;
@@ -122,8 +121,8 @@ class _PaymentAddressEntryViewState extends State<PaymentAddressEntryView> {
             labelText: "Zip Code",
             textEditingController: _zipCodeTextEditingController,
             keyboardType: TextInputType.number,
-            validator: (String value) {
-              if (value.isEmpty) {
+            validator: (String? value) {
+              if (value == null || value.isEmpty) {
                 return UIStrings.fieldReq;
               }
               return null;
@@ -136,7 +135,7 @@ class _PaymentAddressEntryViewState extends State<PaymentAddressEntryView> {
             onPressed: () {
               // Validate returns true if the form is valid, or false
               // otherwise.
-              if (_formKey.currentState.validate()) {
+              if (_formKey.currentState!.validate()) {
                 // If the form is valid, display a Snackbar.
                 print("Valid");
                 widget.onSubmit(

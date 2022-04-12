@@ -5,13 +5,13 @@ class PaymentCard {
   String year;
 
   PaymentCard({
-    this.number,
-    this.cvv,
-    this.month,
-    this.year,
+    required this.number,
+    required this.cvv,
+    required this.month,
+    required this.year,
   });
 
-  dynamic toJOSNObject() {
+  dynamic toMap() {
     return {
       "number": this.number,
       "cvv": this.cvv,

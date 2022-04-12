@@ -7,17 +7,14 @@ class Transaction {
   TransactionState state;
 
   Transaction({
-    this.message,
-    this.refrenceNumber,
-    this.state,
+    required this.message,
+    required this.refrenceNumber,
+    required this.state,
   });
 
-  factory Transaction.fromObject(APIResponse apiResponse) {
-    final transaction = Transaction();
-    transaction.message =
-        apiResponse.gatewayResponse ?? apiResponse.dataMessage ?? "";
-    transaction.refrenceNumber = apiResponse.reference;
-    transaction.state = apiResponse.nextAction;
-    return transaction;
-  }
+  factory Transaction.fromObject(APIResponse apiResponse) => Transaction(
+        message: apiResponse.gatewayResponse ?? apiResponse.dataMessage,
+        refrenceNumber: apiResponse.reference,
+        state: apiResponse.nextAction,
+      );
 }

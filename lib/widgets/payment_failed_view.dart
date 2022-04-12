@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
 import 'package:paystack_manager/models/payment_info.dart';
 import 'package:paystack_manager/utils/ui_color.dart';
 import 'package:paystack_manager/widgets/payment_option_header.dart';
@@ -7,9 +6,9 @@ import 'package:paystack_manager/widgets/secured_by.dart';
 
 class PaymentFailedView extends StatefulWidget {
   PaymentFailedView({
-    Key key,
-    this.paymentInfo,
-    this.message,
+    Key? key,
+    required this.paymentInfo,
+    required this.message,
     this.title = "Transaction Failed",
   }) : super(key: key);
 
@@ -36,7 +35,7 @@ class _PaymentFailedViewState extends State<PaymentFailedView> {
         ),
         Icon(
           //Icons.close,
-          FlutterIcons.error_mdi,
+          Icons.error,
           size: 48,
           color: Colors.red,
         ),

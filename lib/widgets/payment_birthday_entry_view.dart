@@ -9,10 +9,10 @@ import 'package:paystack_manager/widgets/text_input_field.dart';
 
 class PaymentBirthDayEntryView extends StatefulWidget {
   PaymentBirthDayEntryView({
-    Key key,
-    this.paymentInfo,
-    this.message,
-    this.onSubmit,
+    Key? key,
+    required this.paymentInfo,
+    required this.message,
+    required this.onSubmit,
   }) : super(key: key);
 
   final PaymentInfo paymentInfo;
@@ -78,8 +78,8 @@ class _PaymentBirthDayEntryViewState extends State<PaymentBirthDayEntryView> {
             textEditingController: _dobTextEditingController,
             hintText: "YYYY-MM-DD",
             readyOnly: true,
-            validator: (String value) {
-              if (value.isEmpty) {
+            validator: (String? value) {
+              if (value == null || value.isEmpty) {
                 return UIStrings.fieldReq;
               }
               return null;
@@ -115,7 +115,7 @@ class _PaymentBirthDayEntryViewState extends State<PaymentBirthDayEntryView> {
             onPressed: () {
               // Validate returns true if the form is valid, or false
               // otherwise.
-              if (_formKey.currentState.validate()) {
+              if (_formKey.currentState!.validate()) {
                 // If the form is valid, display a Snackbar.
                 print("Valid");
                 widget.onSubmit(_dobTextEditingController.text);

@@ -18,14 +18,12 @@ class CustomDialog {
     String title = "",
     String message = "",
     bool isDismissible = true,
-    Function onDismissAction,
+    Function? onDismissAction,
   }) async {
     Widget alertBodyWidget = Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        (Platform.isIOS)
-            ? CupertinoActivityIndicator()
-            : CircularProgressIndicator(),
+        CircularProgressIndicator.adaptive(),
         (Platform.isIOS) ? SizedBox(height: 10) : SizedBox.shrink(),
         Text(title),
         (Platform.isIOS) ? SizedBox(height: 10) : SizedBox.shrink(),
@@ -50,20 +48,18 @@ class CustomDialog {
     }
 
     // show the dialog
-    if (context != null) {
-      showDialog(
-        context: context,
-        barrierDismissible: isDismissible,
-        builder: (BuildContext context) {
-          return alert;
-        },
-      ).then(
-        (val) {
-          if (onDismissAction != null) {
-            onDismissAction();
-          }
-        },
-      );
-    }
+    showDialog(
+      context: context,
+      barrierDismissible: isDismissible,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    ).then(
+      (val) {
+        if (onDismissAction != null) {
+          onDismissAction();
+        }
+      },
+    );
   }
 }

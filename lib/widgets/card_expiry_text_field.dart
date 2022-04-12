@@ -6,12 +6,12 @@ import 'package:paystack_manager/widgets/text_input_field.dart';
 
 class CardExpiryTextField extends StatefulWidget {
   CardExpiryTextField({
-    Key key,
+    Key? key,
     this.onSaved,
-    this.textEditingController,
+    required this.textEditingController,
   }) : super(key: key);
 
-  final Function onSaved;
+  final Function(String?)? onSaved;
   final TextEditingController textEditingController;
 
   @override

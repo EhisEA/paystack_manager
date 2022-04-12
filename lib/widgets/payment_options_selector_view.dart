@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:paystack_manager/models/payment_info.dart';
 import 'package:paystack_manager/models/payment_option.dart';
+import 'package:paystack_manager/utils/typedef.dart';
 import 'package:paystack_manager/utils/ui_color.dart';
 import 'package:paystack_manager/widgets/payment_options_list_view.dart';
 import 'package:paystack_manager/widgets/secured_by.dart';
 
 class PaymentOptionSelectorView extends StatefulWidget {
   const PaymentOptionSelectorView({
-    Key key,
-    @required this.paymentOptionslist,
+    Key? key,
+    required this.paymentOptionslist,
+    required this.paymentInfo,
     this.onItemPressed,
-    this.paymentInfo,
   }) : super(key: key);
 
   final PaymentInfo paymentInfo;
   final List<PaymentOption> paymentOptionslist;
-  final Function onItemPressed;
+  final PaymentOptionSelectCallBack? onItemPressed;
 
   @override
   _PaymentOptionSelectorViewState createState() =>
@@ -58,7 +59,7 @@ class _PaymentOptionSelectorViewState extends State<PaymentOptionSelectorView> {
               ),
               PaymentOptionsListview(
                 paymentOptionslist: widget.paymentOptionslist,
-                onItemPressed: widget.onItemPressed,
+                onItemPressed: widget.onItemPressed?.call,
               ),
             ],
           ),

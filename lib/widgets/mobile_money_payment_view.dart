@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
 import 'package:paystack_manager/data/payment_options.dart';
 import 'package:paystack_manager/models/payment_info.dart';
 import 'package:paystack_manager/models/payment_option.dart';
@@ -12,15 +11,15 @@ import 'package:paystack_manager/widgets/text_input_field.dart';
 
 class MobileMoneyPaymentView extends StatefulWidget {
   MobileMoneyPaymentView({
-    Key key,
-    this.paymentInfo,
-    this.message,
-    this.onSubmit,
+    Key? key,
+    required this.paymentInfo,
+    required this.message,
+    required this.onSubmit,
   }) : super(key: key);
 
   final PaymentInfo paymentInfo;
   final String message;
-  final Function onSubmit;
+  final Function(String, String) onSubmit;
 
   @override
   _MobileMoneyPaymentViewState createState() => _MobileMoneyPaymentViewState();
@@ -38,7 +37,7 @@ class _MobileMoneyPaymentViewState extends State<MobileMoneyPaymentView> {
   //List of available payment options
   List<PaymentOption> mobileMoneyOptionslist =
       PaymentOptions.getMobileMoneyList();
-  PaymentOption _selectedMobileMoneyOption;
+  PaymentOption? _selectedMobileMoneyOption;
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +61,8 @@ class _MobileMoneyPaymentViewState extends State<MobileMoneyPaymentView> {
           Icon(
             //FontAwesome.mobile_phone,
             // FlutterIcons.smartphone_fea,
-            FlutterIcons.screen_smartphone_sli,
+            Icons.phone_android,
+            // FlutterIcons.screen_smartphone_sli,
             // FlutterIcons.md_phone_portrait_ion,
             size: 42,
             color: UIColors.primaryColor,
@@ -89,7 +89,7 @@ class _MobileMoneyPaymentViewState extends State<MobileMoneyPaymentView> {
                 side: BorderSide(
                     width: 1.0,
                     style: BorderStyle.solid,
-                    color: Colors.grey[500]),
+                    color: Colors.grey.shade500),
                 borderRadius: BorderRadius.all(
                   Radius.circular(5.0),
                 ),
@@ -108,9 +108,10 @@ class _MobileMoneyPaymentViewState extends State<MobileMoneyPaymentView> {
                     ),
                   )
                   .toList(),
-              onChanged: (PaymentOption newValue) {
+              onChanged: (PaymentOption? newValue) {
                 setState(() {
-                  _selectedMobileMoneyOption = newValue;
+                  _selectedMobileMoneyOption =
+                      newValue ?? _selectedMobileMoneyOption;
                 });
               },
               value: _selectedMobileMoneyOption,
@@ -123,8 +124,8 @@ class _MobileMoneyPaymentViewState extends State<MobileMoneyPaymentView> {
             labelText: "Phone Number",
             textEditingController: _phoneNumberTextEditingController,
             keyboardType: TextInputType.phone,
-            validator: (String value) {
-              if (value.isEmpty) {
+            validator: (String? value) {
+              if (value == null || value.isEmpty) {
                 return UIStrings.fieldReq;
               } else if (value.length < 10 || value.length > 13) {
                 return "Invalid Phone Number";
@@ -139,10 +140,10 @@ class _MobileMoneyPaymentViewState extends State<MobileMoneyPaymentView> {
             onPressed: () {
               // Validate returns true if the form is valid, or false
               // otherwise.
-              if (_formKey.currentState.validate()) {
+              if (_formKey.currentState!.validate()) {
                 // If the form is valid, display a Snackbar.
                 print("Valid");
-                widget.onSubmit(_selectedMobileMoneyOption.slug,
+                widget.onSubmit(_selectedMobileMoneyOption!.slug,
                     _phoneNumberTextEditingController.text);
               } else {
                 print("Invalid");

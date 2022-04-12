@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
 import 'package:paystack_manager/utils/ui_color.dart';
 
 class SecuredByFooter extends StatelessWidget {
   const SecuredByFooter({
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override
@@ -14,8 +13,7 @@ class SecuredByFooter extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Icon(
-          // Icons.lock,
-          FontAwesome.lock,
+          Icons.lock,
           size: 18,
           color: UIColors.primaryColor,
         ),

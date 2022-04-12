@@ -5,7 +5,7 @@ import 'package:paystack_manager/models/payment_card.dart';
 class PaymentInfo {
   String secretKey;
   String reference;
-  Widget companyAssetImage;
+  Widget? companyAssetImage;
   int amount;
   String country;
   String currency;
@@ -13,7 +13,7 @@ class PaymentInfo {
   String firstName;
   String lastName;
   dynamic metadata;
-  PaymentCard paymentCard;
+  PaymentCard? paymentCard;
 
   String get formatedAmount {
     double hundredth = this.amount / 100;
@@ -22,16 +22,24 @@ class PaymentInfo {
   }
 
   PaymentInfo({
-    this.secretKey,
-    this.reference,
-    this.companyAssetImage,
-    this.amount,
-    this.country,
-    this.currency,
-    this.email,
-    this.firstName,
-    this.lastName,
+    required this.secretKey,
+    required this.reference,
+    required this.companyAssetImage,
+    required this.amount,
+    required this.country,
+    required this.currency,
+    required this.email,
+    required this.firstName,
+    required this.lastName,
     this.metadata,
     this.paymentCard,
   });
+  Map<String, dynamic> toMap() => {
+        "email": this.email,
+        "amount": this.amount,
+        "currency": this.currency,
+        "reference": this.reference,
+        "metadata": this.metadata,
+        "card": paymentCard?.toMap(),
+      };
 }

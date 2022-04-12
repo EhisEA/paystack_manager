@@ -13,29 +13,12 @@ class PaystackPaymentApi {
   static Dio dio = new Dio(options);
 
   static Future<APIResponse> chargeCard({
-    PaymentInfo paymentInfo,
+    required PaymentInfo paymentInfo,
   }) async {
-    APIResponse apiResponse;
-
-    //Preparing request payload
-    final Map<String, dynamic> formDataMap = {
-      "email": paymentInfo.email,
-      "amount": paymentInfo.amount,
-      "currency": paymentInfo.currency,
-      "reference": paymentInfo.reference,
-      "metadata": paymentInfo.metadata,
-      "card": {
-        "number": paymentInfo.paymentCard.number,
-        "cvv": paymentInfo.paymentCard.cvv,
-        "expiry_month": paymentInfo.paymentCard.month,
-        "expiry_year": paymentInfo.paymentCard.year
-      },
-    };
-
     try {
       var response = await dio.post(
         APIs.chargeUrl,
-        data: formDataMap,
+        data: paymentInfo.toMap(),
         options: Options(
           headers: {
             'Content-Type': 'application/json',
@@ -44,51 +27,19 @@ class PaystackPaymentApi {
         ),
       );
 
-      if (response.statusCode == 200) {
-        //format the response data for system to continue operating
-        apiResponse = APIResponse.fromObject(response.data);
-      } else {
-        var errorMessage = "Request Failed. Please try again later";
+      checkResponse(response);
 
-        try {
-          //alert the user with the message from the server
-          errorMessage =
-              response.data["data"]["message"] ?? response.data["message"];
-        } catch (error) {
-          print("Error Data Getting Failed:: $error");
-        }
-
-        throw errorMessage;
-      }
+      return APIResponse.fromObject(response.data);
     } catch (error) {
-      DioError dioError = error as DioError;
-      var errorMessage = "Request Failed. Please try again later";
-
-      try {
-        //alert the user with the message from the server
-        // final jsonObject = convert.jsonDecode(error.message);
-        if (dioError.response.data["data"] != null) {
-          errorMessage = dioError.response.data["data"]["message"];
-        } else {
-          errorMessage = dioError.response.data["message"];
-        }
-      } catch (error) {
-        print("Error Data Getting Failed:: $error");
-      }
-
-      throw errorMessage;
+      throw errorParser(error);
     }
-
-    return apiResponse;
   }
 
   static Future<APIResponse> sendPIN({
-    PaymentInfo paymentInfo,
-    String refrence,
-    String pin,
+    required PaymentInfo paymentInfo,
+    required String refrence,
+    required String pin,
   }) async {
-    APIResponse apiResponse;
-
     //Preparing request payload
     final Map<String, dynamic> formDataMap = {
       "pin": pin,
@@ -107,53 +58,19 @@ class PaystackPaymentApi {
         ),
       );
 
-      if (response.statusCode == 200) {
-        //format the response data for system to continue operating
-        apiResponse = APIResponse.fromObject(response.data);
-      } else {
-        var errorMessage = "Request Failed. Please try again later";
+      checkResponse(response);
 
-        try {
-          //alert the user with the message from the server
-          if (response.data["data"] != null) {
-            errorMessage = response.data["data"]["message"];
-          } else {
-            errorMessage = response.data["message"];
-          }
-        } catch (error) {
-          print("Error Data Getting Failed:: $error");
-        }
-
-        throw errorMessage;
-      }
+      return APIResponse.fromObject(response.data);
     } catch (error) {
-      DioError dioError = error as DioError;
-      var errorMessage = "Request Failed. Please try again later";
-
-      try {
-        //alert the user with the message from the server
-        if (dioError.response.data["data"] != null) {
-          errorMessage = dioError.response.data["data"]["message"];
-        } else {
-          errorMessage = dioError.response.data["message"];
-        }
-      } catch (error) {
-        print("Error Data Getting Failed:: $error");
-      }
-
-      throw errorMessage;
+      throw errorParser(error);
     }
-
-    return apiResponse;
   }
 
   static Future<APIResponse> sendOTP({
-    String refrence,
-    String otp,
-    PaymentInfo paymentInfo,
+    required String refrence,
+    required String otp,
+    required PaymentInfo paymentInfo,
   }) async {
-    APIResponse apiResponse;
-
     //Preparing request payload
     final Map<String, dynamic> formDataMap = {
       "otp": otp,
@@ -171,54 +88,19 @@ class PaystackPaymentApi {
           },
         ),
       );
+      checkResponse(response);
 
-      if (response.statusCode == 200) {
-        //format the response data for system to continue operating
-        apiResponse = APIResponse.fromObject(response.data);
-      } else {
-        var errorMessage = "Request Failed. Please try again later";
-
-        try {
-          //alert the user with the message from the server
-          if (response.data["data"] != null) {
-            errorMessage = response.data["data"]["message"];
-          } else {
-            errorMessage = response.data["message"];
-          }
-        } catch (error) {
-          print("Error Data Getting Failed:: $error");
-        }
-
-        throw errorMessage;
-      }
+      return APIResponse.fromObject(response.data);
     } catch (error) {
-      DioError dioError = error as DioError;
-      var errorMessage = "Request Failed. Please try again later";
-
-      try {
-        //alert the user with the message from the server
-        if (dioError.response.data["data"] != null) {
-          errorMessage = dioError.response.data["data"]["message"];
-        } else {
-          errorMessage = dioError.response.data["message"];
-        }
-      } catch (error) {
-        print("Error Data Getting Failed:: $error");
-      }
-
-      throw errorMessage;
+      throw errorParser(error);
     }
-
-    return apiResponse;
   }
 
   static Future<APIResponse> sendPhone({
-    String refrence,
-    String phone,
-    PaymentInfo paymentInfo,
+    required String refrence,
+    required String phone,
+    required PaymentInfo paymentInfo,
   }) async {
-    APIResponse apiResponse;
-
     //Preparing request payload
     final Map<String, dynamic> formDataMap = {
       "phone": phone,
@@ -236,53 +118,18 @@ class PaystackPaymentApi {
           },
         ),
       );
+      checkResponse(response);
 
-      if (response.statusCode == 200) {
-        //format the response data for system to continue operating
-        apiResponse = APIResponse.fromObject(response.data);
-      } else {
-        var errorMessage = "Request Failed. Please try again later";
-
-        try {
-          //alert the user with the message from the server
-          if (response.data["data"] != null) {
-            errorMessage = response.data["data"]["message"];
-          } else {
-            errorMessage = response.data["message"];
-          }
-        } catch (error) {
-          print("Error Data Getting Failed:: $error");
-        }
-
-        throw errorMessage;
-      }
+      return APIResponse.fromObject(response.data);
     } catch (error) {
-      DioError dioError = error as DioError;
-      var errorMessage = "Request Failed. Please try again later";
-
-      try {
-        //alert the user with the message from the server
-        if (dioError.response.data["data"] != null) {
-          errorMessage = dioError.response.data["data"]["message"];
-        } else {
-          errorMessage = dioError.response.data["message"];
-        }
-      } catch (error) {
-        print("Error Data Getting Failed:: $error");
-      }
-
-      throw errorMessage;
+      throw errorParser(error);
     }
-
-    return apiResponse;
   }
 
   static Future<APIResponse> verifyTransaction({
-    String refrence,
-    PaymentInfo paymentInfo,
+    required String refrence,
+    required PaymentInfo paymentInfo,
   }) async {
-    APIResponse apiResponse;
-
     try {
       var response = await dio.get(
         //for reading purpose
@@ -294,54 +141,19 @@ class PaystackPaymentApi {
           },
         ),
       );
+      checkResponse(response);
 
-      if (response.statusCode == 200) {
-        //format the response data for system to continue operating
-        apiResponse = APIResponse.fromObject(response.data);
-      } else {
-        var errorMessage = "Request Failed. Please try again later";
-
-        try {
-          //alert the user with the message from the server
-          if (response.data["data"] != null) {
-            errorMessage = response.data["data"]["message"];
-          } else {
-            errorMessage = response.data["message"];
-          }
-        } catch (error) {
-          print("Error Data Getting Failed:: $error");
-        }
-
-        throw errorMessage;
-      }
+      return APIResponse.fromObject(response.data);
     } catch (error) {
-      DioError dioError = error as DioError;
-      var errorMessage = "Request Failed. Please try again later";
-
-      try {
-        //alert the user with the message from the server
-        if (dioError.response.data["data"] != null) {
-          errorMessage = dioError.response.data["data"]["message"];
-        } else {
-          errorMessage = dioError.response.data["message"];
-        }
-      } catch (error) {
-        print("Error Data Getting Failed:: $error");
-      }
-
-      throw errorMessage;
+      throw errorParser(error);
     }
-
-    return apiResponse;
   }
 
   static Future<APIResponse> sendBirthday({
-    String refrence,
-    String dob,
-    PaymentInfo paymentInfo,
+    required String refrence,
+    required String dob,
+    required PaymentInfo paymentInfo,
   }) async {
-    APIResponse apiResponse;
-
     //Preparing request payload
     final Map<String, dynamic> formDataMap = {
       "birthday": dob,
@@ -359,57 +171,22 @@ class PaystackPaymentApi {
           },
         ),
       );
+      checkResponse(response);
 
-      if (response.statusCode == 200) {
-        //format the response data for system to continue operating
-        apiResponse = APIResponse.fromObject(response.data);
-      } else {
-        var errorMessage = "Request Failed. Please try again later";
-
-        try {
-          //alert the user with the message from the server
-          if (response.data["data"] != null) {
-            errorMessage = response.data["data"]["message"];
-          } else {
-            errorMessage = response.data["message"];
-          }
-        } catch (error) {
-          print("Error Data Getting Failed:: $error");
-        }
-
-        throw errorMessage;
-      }
+      return APIResponse.fromObject(response.data);
     } catch (error) {
-      DioError dioError = error as DioError;
-      var errorMessage = "Request Failed. Please try again later";
-
-      try {
-        //alert the user with the message from the server
-        if (dioError.response.data["data"] != null) {
-          errorMessage = dioError.response.data["data"]["message"];
-        } else {
-          errorMessage = dioError.response.data["message"];
-        }
-      } catch (error) {
-        print("Error Data Getting Failed:: $error");
-      }
-
-      throw errorMessage;
+      throw errorParser(error);
     }
-
-    return apiResponse;
   }
 
   static Future<APIResponse> sendAddress({
-    String refrence,
-    String address,
-    String city,
-    String state,
-    String zipCode,
-    PaymentInfo paymentInfo,
+    required String refrence,
+    required String address,
+    required String city,
+    required String state,
+    required String zipCode,
+    required PaymentInfo paymentInfo,
   }) async {
-    APIResponse apiResponse;
-
     //Preparing request payload
     final Map<String, dynamic> formDataMap = {
       "address": address,
@@ -430,51 +207,18 @@ class PaystackPaymentApi {
           },
         ),
       );
+      checkResponse(response);
 
-      if (response.statusCode == 200) {
-        //format the response data for system to continue operating
-        apiResponse = APIResponse.fromObject(response.data);
-      } else {
-        var errorMessage = "Request Failed. Please try again later";
-
-        try {
-          //alert the user with the message from the server
-          if (response.data["data"] != null) {
-            errorMessage = response.data["data"]["message"];
-          } else {
-            errorMessage = response.data["message"];
-          }
-        } catch (error) {
-          print("Error Data Getting Failed:: $error");
-        }
-
-        throw errorMessage;
-      }
+      return APIResponse.fromObject(response.data);
     } catch (error) {
-      DioError dioError = error as DioError;
-      var errorMessage = "Request Failed. Please try again later";
-
-      try {
-        //alert the user with the message from the server
-        if (dioError.response.data["data"] != null) {
-          errorMessage = dioError.response.data["data"]["message"];
-        } else {
-          errorMessage = dioError.response.data["message"];
-        }
-      } catch (error) {
-        print("Error Data Getting Failed:: $error");
-      }
-
-      throw errorMessage;
+      throw errorParser(error);
     }
-
-    return apiResponse;
   }
 
   static Future<APIResponse> mobileMoneyPayment({
-    String provider,
-    String phone,
-    PaymentInfo paymentInfo,
+    required String provider,
+    required String phone,
+    required PaymentInfo paymentInfo,
   }) async {
     APIResponse apiResponse;
 
@@ -502,54 +246,19 @@ class PaystackPaymentApi {
           },
         ),
       );
+      checkResponse(response);
 
-      if (response.statusCode == 200) {
-        //format the response data for system to continue operating
-        apiResponse = APIResponse.fromObject(response.data);
-      } else {
-        var errorMessage = "Request Failed. Please try again later";
-
-        try {
-          //alert the user with the message from the server
-          if (response.data["data"] != null) {
-            errorMessage = response.data["data"]["message"];
-          } else {
-            errorMessage = response.data["message"];
-          }
-        } catch (error) {
-          print("Error Data Getting Failed:: $error");
-        }
-
-        throw errorMessage;
-      }
+      return APIResponse.fromObject(response.data);
     } catch (error) {
-      DioError dioError = error as DioError;
-      var errorMessage = "Request Failed. Please try again later";
-
-      try {
-        //alert the user with the message from the server
-        if (dioError.response.data["data"] != null) {
-          errorMessage = dioError.response.data["data"]["message"];
-        } else {
-          errorMessage = dioError.response.data["message"];
-        }
-      } catch (error) {
-        print("Error Data Getting Failed:: $error");
-      }
-
-      throw errorMessage;
+      throw errorParser(error);
     }
-
-    return apiResponse;
   }
 
   static Future<APIResponse> bankPayment({
-    String code,
-    String accountNumber,
-    PaymentInfo paymentInfo,
+    required String code,
+    required String accountNumber,
+    required PaymentInfo paymentInfo,
   }) async {
-    APIResponse apiResponse;
-
     //Preparing request payload
     final Map<String, dynamic> formDataMap = {
       "email": paymentInfo.email,
@@ -574,36 +283,29 @@ class PaystackPaymentApi {
           },
         ),
       );
+      checkResponse(response);
 
-      if (response.statusCode == 200) {
-        //format the response data for system to continue operating
-        apiResponse = APIResponse.fromObject(response.data);
-      } else {
-        var errorMessage = "Request Failed. Please try again later";
-
-        try {
-          //alert the user with the message from the server
-          if (response.data["data"] != null) {
-            errorMessage = response.data["data"]["message"];
-          } else {
-            errorMessage = response.data["message"];
-          }
-        } catch (error) {
-          print("Error Data Getting Failed:: $error");
-        }
-
-        throw errorMessage;
-      }
+      return APIResponse.fromObject(response.data);
     } catch (error) {
-      DioError dioError = error as DioError;
+      throw errorParser(error);
+    }
+  }
+
+  // this would check the response coming from the server
+  // this would infrom if it was successful
+  static checkResponse(response) {
+    if (response.statusCode == 200) {
+      //format the response data for system to continue operating
+      return;
+    } else {
       var errorMessage = "Request Failed. Please try again later";
 
       try {
         //alert the user with the message from the server
-        if (dioError.response.data["data"] != null) {
-          errorMessage = dioError.response.data["data"]["message"];
+        if (response.data["data"] != null) {
+          errorMessage = response.data["data"]["message"];
         } else {
-          errorMessage = dioError.response.data["message"];
+          errorMessage = response.data["message"];
         }
       } catch (error) {
         print("Error Data Getting Failed:: $error");
@@ -611,7 +313,23 @@ class PaystackPaymentApi {
 
       throw errorMessage;
     }
+  }
 
-    return apiResponse;
+  static errorParser(error) {
+    DioError dioError = error as DioError;
+    var errorMessage = "Request Failed. Please try again later";
+
+    try {
+      //alert the user with the message from the server
+      if (dioError.response?.data["data"] != null) {
+        errorMessage = dioError.response?.data["data"]["message"];
+      } else {
+        errorMessage = dioError.response?.data["message"];
+      }
+    } catch (error) {
+      print("Error Data Getting Failed:: $error");
+    }
+
+    return errorMessage;
   }
 }

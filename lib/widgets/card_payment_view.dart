@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:paystack_manager/models/payment_card.dart';
 import 'package:paystack_manager/models/payment_info.dart';
 import 'package:paystack_manager/utils/card_utils.dart';
+import 'package:paystack_manager/utils/typedef.dart';
 import 'package:paystack_manager/utils/ui_color.dart';
 import 'package:paystack_manager/widgets/accent_button.dart';
 import 'package:paystack_manager/widgets/card_cvv_text_field.dart';
@@ -12,13 +13,13 @@ import 'package:paystack_manager/widgets/secured_by.dart';
 
 class CardPaymentView extends StatefulWidget {
   CardPaymentView({
-    Key key,
-    this.paymentInfo,
-    this.onSubmit,
+    Key? key,
+    required this.paymentInfo,
+    required this.onSubmit,
   }) : super(key: key);
 
   final PaymentInfo paymentInfo;
-  final Function onSubmit;
+  final PaymentInfoCallBack onSubmit;
 
   @override
   _CardPaymentViewState createState() => _CardPaymentViewState();
@@ -27,7 +28,7 @@ class CardPaymentView extends StatefulWidget {
 class _CardPaymentViewState extends State<CardPaymentView> {
   // Note: This is a GlobalKey<FormState>,
   // not a GlobalKey<MyCustomFormState>.
-  final _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   //TextEditingControllers
   TextEditingController _cardNumberTextEditingController =
@@ -36,6 +37,14 @@ class _CardPaymentViewState extends State<CardPaymentView> {
       new TextEditingController();
   TextEditingController _cardCVVTextEditingController =
       new TextEditingController();
+
+  @override
+  void dispose() {
+    _cardNumberTextEditingController.dispose();
+    _cardExpiryTextEditingController.dispose();
+    _cardCVVTextEditingController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -114,10 +123,10 @@ class _CardPaymentViewState extends State<CardPaymentView> {
                   onPressed: () {
                     // Validate returns true if the form is valid, or false
                     // otherwise.
-                    if (_formKey.currentState.validate()) {
+                    if (_formKey.currentState!.validate()) {
                       // If the form is valid, display a Snackbar.
 
-                      print("Valid");
+                      // print("Valid");
                       String cardNumber = CardUtils.getCleanedNumber(
                           _cardNumberTextEditingController.text);
                       String cardCVV = _cardCVVTextEditingController.text;
@@ -138,7 +147,7 @@ class _CardPaymentViewState extends State<CardPaymentView> {
                       //send the payment info to the parent view to start processing the transaction
                       widget.onSubmit(widget.paymentInfo);
                     } else {
-                      print("Invalid");
+                      // print("Invalid Input Format");
                     }
                   },
                 ),

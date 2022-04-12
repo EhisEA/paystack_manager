@@ -8,35 +8,25 @@ class APIResponse {
   String dataMessage;
   TransactionState nextAction;
   String displayText;
-  String gatewayResponse;
+  String? gatewayResponse;
   String authUrl;
 
   APIResponse({
-    this.status,
-    this.statusMessage,
+    required this.status,
+    required this.statusMessage,
     this.data,
-    this.reference,
-    this.dataMessage,
+    required this.reference,
+    required this.dataMessage,
     this.gatewayResponse,
-    this.nextAction,
-    this.displayText,
-    this.authUrl,
+    required this.nextAction,
+    required this.displayText,
+    required this.authUrl,
   });
 
   factory APIResponse.fromObject(dynamic object) {
-    final apiResponse = APIResponse();
-    apiResponse.status = object["status"];
-    apiResponse.statusMessage = object["message"];
-    apiResponse.data = object["data"];
-    apiResponse.reference = apiResponse.data["reference"];
-    apiResponse.dataMessage = apiResponse.data["message"] ?? "";
-    apiResponse.displayText = apiResponse.data["display_text"] ?? "";
-    apiResponse.gatewayResponse = apiResponse.data["gateway_response"] ?? "";
-    apiResponse.authUrl = apiResponse.data["url"] ?? "";
-
     TransactionState mNextAction = TransactionState.PENDING;
 
-    switch (apiResponse.data["status"]) {
+    switch (object["data"]["status"]) {
       case "pending":
         mNextAction = TransactionState.PENDING;
         break;
@@ -75,8 +65,16 @@ class APIResponse {
         break;
     }
 
-    apiResponse.nextAction = mNextAction;
-
-    return apiResponse;
+    return APIResponse(
+      statusMessage: object["message"],
+      status: object["status"],
+      data: object["data"],
+      reference: object["data"]["reference"],
+      dataMessage: object["data"]["message"] ?? "",
+      displayText: object["data"]["display_text"] ?? "",
+      gatewayResponse: object["data"]["gateway_response"] ?? "",
+      authUrl: object["data"]["url"] ?? "",
+      nextAction: mNextAction,
+    );
   }
 }

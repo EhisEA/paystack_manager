@@ -5,12 +5,12 @@ import 'package:paystack_manager/widgets/text_input_field.dart';
 
 class CardCVVTextField extends StatefulWidget {
   CardCVVTextField({
-    Key key,
+    Key? key,
     this.onSaved,
-    this.textEditingController,
+    required this.textEditingController,
   }) : super(key: key);
 
-  final Function onSaved;
+  final Function(String?)? onSaved;
   final TextEditingController textEditingController;
 
   @override

@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:paystack_manager/models/payment_option.dart';
+import 'package:paystack_manager/utils/typedef.dart';
 import 'package:paystack_manager/utils/ui_color.dart';
 
 class PaymentOptionListViewItem extends StatelessWidget {
   const PaymentOptionListViewItem({
-    Key key,
-    @required this.paymentOption,
+    Key? key,
+    required this.paymentOption,
     this.onPressed,
   }) : super(key: key);
 
   final PaymentOption paymentOption;
-  final Function onPressed;
+  final PaymentOptionSelectCallBack? onPressed;
 
   @override
   Widget build(BuildContext context) {
-    return FlatButton(
-      onPressed: onPressed,
+    return TextButton(
+      onPressed: () => onPressed?.call(paymentOption),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,

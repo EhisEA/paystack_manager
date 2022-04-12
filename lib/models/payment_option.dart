@@ -9,9 +9,9 @@ class PaymentOption {
   bool isMomo;
 
   PaymentOption({
-    @required this.name,
-    @required this.iconData,
-    @required this.slug,
+    required this.name,
+    required this.iconData,
+    required this.slug,
     this.isCard = false,
     this.isBank = false,
     this.isMomo = false,

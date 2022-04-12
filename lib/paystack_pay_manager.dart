@@ -4,7 +4,6 @@ library paystack_manager;
 export 'package:paystack_manager/paystack_pay_manager.dart';
 export 'package:paystack_manager/models/transaction.dart';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:paystack_manager/models/payment_info.dart';
 import 'package:paystack_manager/models/transaction_status.dart';
@@ -14,25 +13,31 @@ class PaystackPayManager {
   BuildContext _context;
   String _secretKey;
   String _reference;
-  Widget _companyAssetImage;
+  Widget? _companyAssetImage;
   // String _publicKey;
   int _amount;
   String _country;
   String _currency;
   String _email;
-  String _firstName;
-  String _lastName;
+  String? _firstName;
+  String? _lastName;
   dynamic _metadata;
 
   //Response handler
-  Function _onSuccessful;
-  Function _onPending;
-  Function _onFailed;
-  Function _onCancelled;
+  Function? _onSuccessful;
+  Function? _onPending;
+  Function? _onFailed;
+  Function? _onCancelled;
 
-  PaystackPayManager({@required BuildContext context}) {
-    this._context = context;
-  }
+  PaystackPayManager(
+    BuildContext context,
+    this._secretKey,
+    this._reference,
+    this._email,
+    this._amount,
+    this._currency,
+    this._country,
+  ) : this._context = context;
 
   // setPublicKey(String publicKey) {
   //   _publicKey = publicKey;
@@ -122,11 +127,11 @@ class PaystackPayManager {
 
   initialize() async {
     // assert( _publicKey != null && _publicKey.isNotEmpty );
-    assert(_secretKey != null && _secretKey.isNotEmpty);
-    assert(_reference != null && _reference.isNotEmpty);
-    assert(_email != null && _email.isNotEmpty);
-    assert(_amount != null && _amount > 0);
-    assert(_currency != null && _currency.isNotEmpty);
+    // assert(_secretKey != null && _secretKey?.isNotEmpty);
+    // assert(_reference != null && _reference.isNotEmpty);
+    // assert(_email != null && _email.isNotEmpty);
+    // assert(_amount != null && _amount > 0);
+    // assert(_currency != null && _currency.isNotEmpty);
 
     final mPaymentInfo = PaymentInfo(
       secretKey: _secretKey,
@@ -135,8 +140,8 @@ class PaystackPayManager {
       country: _country,
       currency: _currency,
       email: _email,
-      firstName: _firstName,
-      lastName: _lastName,
+      firstName: _firstName ?? "",
+      lastName: _lastName ?? "",
       metadata: _metadata,
       companyAssetImage: _companyAssetImage,
     );
@@ -151,13 +156,13 @@ class PaystackPayManager {
     );
 
     if (transactionResult.state == TransactionState.SUCCESS) {
-      _onSuccessful(transactionResult);
+      _onSuccessful?.call(transactionResult);
     } else if (transactionResult.state == TransactionState.PENDING) {
-      _onPending(transactionResult);
+      _onPending?.call(transactionResult);
     } else if (transactionResult.state == TransactionState.FAILED) {
-      _onFailed(transactionResult);
+      _onFailed?.call(transactionResult);
     } else {
-      _onCancelled(transactionResult);
+      _onCancelled?.call(transactionResult);
     }
   }
 

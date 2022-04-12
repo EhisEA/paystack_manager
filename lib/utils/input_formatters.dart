@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class CardMonthInputFormatter extends TextInputFormatter {
@@ -41,6 +40,8 @@ class CardNumberInputFormatter extends TextInputFormatter {
     for (int i = 0; i < text.length; i++) {
       buffer.write(text[i]);
       var nonZeroIndex = i + 1;
+      // if it the next 4th value and
+      //it not the last add space
       if (nonZeroIndex % 4 == 0 && nonZeroIndex != text.length) {
         buffer.write('  '); // Add double spaces.
       }
@@ -48,7 +49,8 @@ class CardNumberInputFormatter extends TextInputFormatter {
 
     var string = buffer.toString();
     return newValue.copyWith(
-        text: string,
-        selection: new TextSelection.collapsed(offset: string.length));
+      text: string,
+      selection: new TextSelection.collapsed(offset: string.length),
+    );
   }
 }

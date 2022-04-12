@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
 import 'package:paystack_manager/models/payment_option.dart';
 
 class PaymentOptions {
-  static List<PaymentOption> getList({@required String currency}) {
+  /// List of payment options allowed
+  ///
+  /// ```Card option``` general
+  ///
+  /// ```Bank option``` Nigerian only
+  ///
+  /// ```Mono option``` Ghana only
+  static List<PaymentOption> getList({required String currency}) {
     final cardOption = PaymentOption(
       name: "Card",
       iconData: Icons.credit_card,
@@ -13,7 +19,7 @@ class PaymentOptions {
 
     final bankOption = PaymentOption(
       name: "Bank",
-      iconData: MaterialCommunityIcons.bank,
+      iconData: Icons.balance,
       slug: "bank",
       isBank: true,
     );
@@ -70,25 +76,25 @@ class PaymentOptions {
     return [
       PaymentOption(
         name: "First Bank of Nigeria",
-        iconData: FlutterIcons.bank_mco,
+        iconData: Icons.balance,
         slug: "011",
         isBank: true,
       ),
       PaymentOption(
         name: "Guaranty Trust Bank",
-        iconData: FlutterIcons.bank_mco,
+        iconData: Icons.balance,
         slug: "058",
         isBank: true,
       ),
       PaymentOption(
         name: "United Bank For Africa",
-        iconData: FlutterIcons.bank_mco,
+        iconData: Icons.balance,
         slug: "033",
         isBank: true,
       ),
       PaymentOption(
         name: "Zenith Bank",
-        iconData: FlutterIcons.bank_mco,
+        iconData: Icons.balance,
         slug: "057",
         isBank: true,
       ),

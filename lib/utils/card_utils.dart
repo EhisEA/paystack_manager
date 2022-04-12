@@ -3,8 +3,8 @@ import 'package:paystack_manager/models/card_type.dart';
 import 'package:paystack_manager/utils/ui_strings.dart';
 
 class CardUtils {
-  static String validateCVV(String value) {
-    if (value.isEmpty) {
+  static String? validateCVV(String? value) {
+    if (value == null || value.isEmpty) {
       return UIStrings.fieldReq;
     }
 
@@ -14,8 +14,8 @@ class CardUtils {
     return null;
   }
 
-  static String validateDate(String value) {
-    if (value.isEmpty) {
+  static String? validateDate(String? value) {
+    if (value == null || value.isEmpty) {
       return UIStrings.fieldReq;
     }
 
@@ -64,7 +64,7 @@ class CardUtils {
     return year;
   }
 
-  static bool hasDateExpired(int month, int year) {
+  static bool hasDateExpired(int? month, int? year) {
     return !(month == null || year == null) && isNotExpired(year, month);
   }
 
@@ -104,7 +104,7 @@ class CardUtils {
 
   static Widget getCardIcon(CardType cardType) {
     String img = "";
-    Icon icon;
+    Icon? icon;
     switch (cardType) {
       case CardType.Master:
         img = 'mastercard.png';
@@ -142,22 +142,19 @@ class CardUtils {
         );
         break;
     }
-    Widget widget;
-    if (img.isNotEmpty) {
-      widget = Image(
-        image: AssetImage('assets/images/$img', package: "paystack_manager"),
-        width: 40.0,
-      );
-    } else {
-      widget = icon;
-    }
-    return widget;
+    return icon == null
+        ? Image(
+            image:
+                AssetImage('assets/images/$img', package: "paystack_manager"),
+            width: 40.0,
+          )
+        : icon;
   }
 
   /// With the card number with Luhn Algorithm
   /// https://en.wikipedia.org/wiki/Luhn_algorithm
-  static String validateCardNum(String input) {
-    if (input.isEmpty) {
+  static String? validateCardNum(String? input) {
+    if (input == null || input.isEmpty) {
       return UIStrings.fieldReq;
     }
 

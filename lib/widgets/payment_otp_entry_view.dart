@@ -8,15 +8,15 @@ import 'package:paystack_manager/widgets/text_input_field.dart';
 
 class PaymentOTPEntryView extends StatefulWidget {
   PaymentOTPEntryView({
-    Key key,
-    this.paymentInfo,
-    this.message,
-    this.onSubmit,
+    Key? key,
+    required this.paymentInfo,
+    required this.message,
+    required this.onSubmit,
   }) : super(key: key);
 
   final PaymentInfo paymentInfo;
   final String message;
-  final Function onSubmit;
+  final Function(String) onSubmit;
 
   @override
   _PaymentOTPEntryViewState createState() => _PaymentOTPEntryViewState();
@@ -75,8 +75,8 @@ class _PaymentOTPEntryViewState extends State<PaymentOTPEntryView> {
           InputTextField(
             labelText: "OTP",
             textEditingController: _otpTextEditingController,
-            validator: (String value) {
-              if (value.isEmpty) {
+            validator: (String? value) {
+              if (value == null || value.isEmpty) {
                 return "Invalid OTP";
               }
 
@@ -90,7 +90,7 @@ class _PaymentOTPEntryViewState extends State<PaymentOTPEntryView> {
             onPressed: () {
               // Validate returns true if the form is valid, or false
               // otherwise.
-              if (_formKey.currentState.validate()) {
+              if (_formKey.currentState!.validate()) {
                 // If the form is valid, display a Snackbar.
                 print("Valid");
                 widget.onSubmit(_otpTextEditingController.text);

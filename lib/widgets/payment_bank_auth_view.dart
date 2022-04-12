@@ -4,8 +4,8 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 class PaymentAuthView extends StatefulWidget {
   PaymentAuthView({
-    Key key,
-    this.authUrl,
+    Key? key,
+    required this.authUrl,
   }) : super(key: key);
 
   final String authUrl;

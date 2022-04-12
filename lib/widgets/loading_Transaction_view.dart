@@ -8,9 +8,9 @@ import 'package:paystack_manager/widgets/secured_by.dart';
 
 class LoadingTransactionView extends StatefulWidget {
   LoadingTransactionView({
-    Key key,
-    this.paymentInfo,
-    this.message,
+    Key? key,
+    required this.paymentInfo,
+    required this.message,
   }) : super(key: key);
 
   final PaymentInfo paymentInfo;
